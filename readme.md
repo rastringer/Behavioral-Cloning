@@ -9,7 +9,7 @@ I adjusted steering values for left and right images to improve movement from th
 
 Architecture
 
-I employed the end-to-end convolutional neural network architecture summarized by Nvidia here: http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf 
+I employed the end-to-end convolutional neural network architecture summarized by Nvidia here: http://bit.ly/1T206A2
 The model consists of five convolutional layers (with a 2 x 2 stride and 5 x 5 kernel) and three fully connected layers with zero strides and a 3 x 3 kernel size. 
 
 Fine Tuning
