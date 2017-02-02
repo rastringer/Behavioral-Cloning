@@ -1,4 +1,3 @@
-
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Activation, Flatten, LeakyReLU, ELU, MaxPooling2D
 from keras.layers import Convolution2D, Lambda
@@ -19,20 +18,14 @@ import matplotlib.pyplot as plt
 image_width = 64
 image_height = 64
 
-def show_image(img):
-    plt.imshow(img)
-    plt.show()
-
-
-def load_image(imagepath, data_path):
-    imagepath = imagepath.replace(' ', '')
-    return mpimg.imread(data_path + imagepath)
+def load_image(filepath, data_path):
+    filepath = filepath.replace(' ', '')
+    return mpimg.imread(data_path + filepath)
 
 # crop the dashboard and sky to focus image on road
 def process_image(image, width, height):
     cropped_image = image[32:140, ]
     return scipy.misc.imresize(cropped_image, [width, height])
-
 
 # select left, right and center images at random, adjusting steering if left and right
 def gen_training_data(line_data, data_path, width, height):
@@ -59,7 +52,6 @@ def gen_training_data(line_data, data_path, width, height):
 
     return image, steering
 
-
 # bias selection of images so images with larger steering value are preferred
 def biased_images(line_data, data_path, width, height, threshold, probability):
     image, steering = gen_training_data(line_data, data_path, width, height)
@@ -70,7 +62,6 @@ def biased_images(line_data, data_path, width, height, threshold, probability):
         else:
             image, steering = gen_training_data(line_data, data_path, width, height)
             prob = np.random.uniform()
-
 
 # generating batches of images with steering adjustments
 def gen_batch(data, data_path, width, height, batch_size=32):
@@ -120,8 +111,6 @@ def create_model(image_width, image_height):
 
     return model
 
-
-
 data_path = "data/"
 data = pandas.read_csv(data_path + "/driving_log.csv")
 
@@ -138,7 +127,7 @@ model = create_model(image_width, image_height)
 model.summary()
 adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
 model.compile(loss='mean_squared_error', optimizer=adam, metrics=[])
-nb_epoch = 2
+nb_epoch = 30
 
 history = model.fit_generator(gen_batch(training_data, data_path, image_width, image_height), samples_per_epoch=300*32,
                               validation_data=gen_batch(validation_data, data_path, image_width, image_height), nb_val_samples=30*32,
@@ -149,6 +138,3 @@ with open('model.json', 'w') as f:
     
     model.save_weights('model.h5')
     print("Model saved to disk")
-
-
-
