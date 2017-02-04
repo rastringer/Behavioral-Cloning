@@ -80,34 +80,34 @@ def gen_batch(data, data_path, width, height, batch_size=32):
 def create_model(image_width, image_height):
     model = Sequential()
     # normalize input to (-1, 1)
-    model.add(Lambda(lambda x: x / 127.5 - 1., input_shape=(image_width, image_height, 3), name='Normalization'))
+    model.add(Lambda(lambda x: x / 127.5 - 1., input_shape=(image_width, image_height, 3)))
     model.add(Convolution2D(24, 5, 5, border_mode='same',
-                            input_shape=(image_width, image_height), name='conv_one'))
-    model.add(LeakyReLU(name="LeakyRelu_one"))
-    model.add(Convolution2D(36, 5, 5, name='conv_two'))
-    model.add(LeakyReLU(name="LeakyRelu_one"))
+                            input_shape=(image_width, image_height)))
+    model.add(LeakyReLU())
+    model.add(Convolution2D(36, 5, 5))
+    model.add(LeakyReLU())
     
-    model.add(MaxPooling2D(pool_size=(2, 2), name="MaxPool_one"))
-    model.add(Dropout(0.5, name="Dropout_0.5_1"))
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(.5))
 
-    model.add(Convolution2D(48, 5, 5, border_mode='same', name='conv_three'))
-    model.add(LeakyReLU(name="LeakyRelu_three"))
+    model.add(Convolution2D(48, 5, 5, border_mode='same'))
+    model.add(LeakyReLU())
     
-    model.add(Convolution2D(64, 3, 3, name='Conv4'))
-    model.add(LeakyReLU(name="LeakyRelu_four"))
-    model.add(MaxPooling2D(pool_size=(2, 2), name="MaxPool_two"))
-    model.add(Dropout(0.5, name="Dropout_0.5_2"))
+    model.add(Convolution2D(64, 3, 3))
+    model.add(LeakyReLU())
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(.5))
     
-    model.add(Convolution2D(64, 3, 3, name='conv_five'))
-    model.add(LeakyReLU(name="LeakyRelu_five"))
-    model.add(MaxPooling2D(pool_size=(2, 2), name="MaxPool_three"))
-    model.add(Dropout(0.5, name="Dropout_0.5_3"))
+    model.add(Convolution2D(64, 3, 3))
+    model.add(LeakyReLU())
+    model.add(MaxPooling2D(pool_size=(2, 2)))
+    model.add(Dropout(.5))
 
-    model.add(Flatten(name="Flatten"))
-    model.add(Dense(512, name="Dense512"))
-    model.add(LeakyReLU(name="LeakyRelu_six"))
-    model.add(Dropout(0.5, name="Dropout_0.5_4"))
-    model.add(Dense(1, name="Output"))
+    model.add(Flatten())
+    model.add(Dense(512))
+    model.add(LeakyReLU())
+    model.add(Dropout(.5))
+    model.add(Dense(1))
 
     return model
 
