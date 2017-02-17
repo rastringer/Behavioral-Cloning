@@ -1,163 +1,86 @@
+''' 
+With huge thanks to Udacity Instructor David Silver for his excellent video Q & A on this project here http://bit.ly/2kwk5kz.
+Some of the code below is from the tutorial.
+'''
 
-from keras.models import Sequential
-from keras.layers import Dense, Dropout, Activation, Flatten, LeakyReLU, ELU, MaxPooling2D
-from keras.layers import Convolution2D, Lambda
-from keras.optimizers import Adam
-
-import matplotlib.image as mpimg
-import numpy as np
-import pandas
-import os
-import json
+import csv
 import cv2
-
-import matplotlib
-import scipy.misc
-
-import matplotlib.pyplot as plt
-
-image_height = 66
-image_width = 200
-
-def show_image(img):
-    plt.imshow(img)
-    plt.show()
+import numpy as np
+import sklearn
 
 
-def load_image(imagepath, data_path):
-    imagepath = imagepath.replace(' ', '')
-    return mpimg.imread(data_path + imagepath)
+lines = []
+with open('./data3/driving_log.csv') as csvfile:
+    next(csvfile, None)
+    reader = csv.reader(csvfile)
+    for line in reader:
+        lines.append(line)
 
-def random_brightness():
-    image = cv2.cvtColor(image, cv2.COLOR_RGB2HSV)
-    random_brightness = .1 + np.random.uniform()
-    image[:,:,2] = image[:,:,2] * random_brightness
-    image = cv2.cvtColor(image, cv2.COLOR_HSV2RGB)
-    image = cv2.resize(image, (img_height, img_width), interpolation=cv2.INTER_AREA)
-    return image
+images = []
+measurements = []
 
+for line in lines:
+    for i in range(3):
+        # Load images from center, left and right cameras
+        source_path = line[i]
+        tokens = source_path.split('\\')
+        filename = tokens[-1]
+        local_path = "./data3/IMG/" + filename
+        image = cv2.imread(local_path)
+        images.append(image)
 
-# crop the dashboard and sky to focus image on road
-def process_image(image, width, height):
-    cropped_image = image[32:140, ]
-    return scipy.misc.imresize(cropped_image, [width, height])
+    # Introduce steering correction
+    correction = 0.2
+    measurement = float(line[3])
+    # Steering adjustment for center images
+    measurements.append(measurement)
+    # Add correction for steering for left images
+    measurements.append(measurement+correction)
+    # Minus correction for steering for right images
+    measurements.append(measurement-correction)
 
+augmented_images = []
+augmented_measurements = []
 
-# select left, right and center images at random, adjusting steering if left and right
-def gen_training_data(line_data, data_path, width, height):
-    random_image = np.random.randint(3)
-    steer_adjust = 0.0
-    if (random_image == 0):
-        image_path = line_data['center'][0].strip()
-    if (random_image == 1):
-        image_path = line_data['left'][0].strip()
-        steer_adjust = 0.3
-    if (random_image == 2):
-        image_path = line_data['right'][0].strip()
-        steer_adjust = -0.3
-    steering = line_data['steering'][0] + steer_adjust
-    image = load_image(image_path, data_path)
-    # crop and resize image
-    image = process_image(image, width, height)
-    image = np.array(image)
-    # randomly flip image
-    flip_it = np.random.randint(2)
-    if flip_it == 1:
-        image = cv2.flip(image, 1)
-        steering = -steering
+# Augmented data set by adding 'flipped' images so model can learn from reversed images, as well as random brightness (with thanks to Vivek Yadav at http://bit.ly/2kOk6MU for the latter)
+for image, measurement in zip(images, measurements):
+    augmented_images.append(image)
+    augmented_measurements.append(measurement)
+    brightened_image = cv2.cvtColor(image,cv2.COLOR_RGB2HSV)
+    random_bright = .25+np.random.uniform()
+    brightened_image[:,:,2] = brightened_image[:,:,2]*random_bright
+    brightened_image = cv2.cvtColor(brightened_image,cv2.COLOR_HSV2RGB)
+    flipped_image = cv2.flip(brightened_image, 1)
+    flipped_measurement = measurement * -1.0
+    augmented_images.append(flipped_image)
+    augmented_measurements.append(flipped_measurement)
 
-    return image, steering
+# Pull the image and steering measurements into NumPy arrays we can use in the model
+X_train = np.array(augmented_images)
+y_train = np.array(augmented_measurements)
 
+import keras
+from keras.models import Sequential
+from keras.layers import Flatten, Dense, Lambda
+from keras.layers.convolutional import Convolution2D, Cropping2D
+from keras.layers.pooling import MaxPooling2D
 
-# bias selection of images so images with larger steering value are preferred
-def biased_images(line_data, data_path, width, height, threshold, probability):
-    image, steering = gen_training_data(line_data, data_path, width, height)
-    prob = np.random.uniform()
-    while (True):
-        if (abs(steering) > threshold or prob > probability):
-            return image, steering
-        else:
-            image, steering = gen_training_data(line_data, data_path, width, height)
-            prob = np.random.uniform()
+# Model based on Nvidia's end-to-end architecture
+model = Sequential()
+model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
+model.add(Cropping2D(cropping=((70,25),(1,1))))
+model.add(Convolution2D(24,5,5, subsample=(2,2),activation='relu'))
+model.add(Convolution2D(36,5,5,subsample=(2,2),activation='relu'))
+model.add(Convolution2D(48,5,5,subsample=(2,2),activation='relu'))
+model.add(Convolution2D(64,3,3,activation='relu'))
+model.add(Convolution2D(64,3,3,activation='relu'))
+model.add(Flatten())
+model.add(Dense(100))
+model.add(Dense(50))
+model.add(Dense(10))
+model.add(Dense(1))
 
+model.compile(optimizer='adam', loss='mse')
+model.fit(X_train, y_train, validation_split=0.2, shuffle=True, nb_epoch=10)
 
-# generating batches of images with steering adjustments
-def gen_batch(data, data_path, width, height, batch_size=32):
-    batch_images = np.zeros((batch_size, width, height, 3))
-    batch_steering = np.zeros(batch_size)
-    while 1:
-        for current in range(batch_size):
-            line_index = np.random.randint(len(data))
-            line_data = data.iloc[[line_index]].reset_index()
-            image, steering = biased_images(line_data, data_path, width, height, 0.1, 0.8)
-            batch_images[current] = image
-            batch_steering[current] = steering
-        yield batch_images, batch_steering
-
-# CNN architecture following Nvidia's model
-def create_model(time_len=1):
-    model = Sequential()
-    # normalize input to (-1, 1)
-    model.add(Lambda(lambda x: x / 127.5 - 1., input_shape=(image_width, image_height, 3),
-        output_shape=(image_width, image_height, 3)))
-    # 3 layers of 5 x 5 kernel, 2 x 2 stride
-    model.add(Convolution2D(24, 5, 5, subsample=(2, 2), border_mode='same'))
-    model.add(LeakyReLU())
-    model.add(Convolution2D(36, 5, 5, subsample=(2, 2), border_mode='same'))
-    model.add(LeakyReLU())
-    
-    model.add(Dropout(.5))
-
-    model.add(Convolution2D(48, 5, 5, subsample=(2, 2), border_mode='same'))
-    model.add(LeakyReLU())
-    
-    # final 2 layers, non-strided, 3 x 3 kernel
-    model.add(Convolution2D(64, 3, 3))
-    model.add(LeakyReLU())
-    model.add(Dropout(.5))
-    
-    model.add(Convolution2D(64, 3, 3))
-    model.add(LeakyReLU())
-    model.add(Dropout(.5))
-
-    # fully-connected layers
-    model.add(Flatten())
-    model.add(Dropout(.2))
-    model.add(LeakyReLU())
-    model.add(Dense(512))
-    model.add(LeakyReLU())
-    # dropout to avoid overfitting
-    model.add(Dropout(.5))
-    model.add(LeakyReLU())
-    model.add(Dense(1))
-
-    return model
-
-
-
-data_path = "data/"
-data = pandas.read_csv(data_path + "/driving_log.csv")
-
-def split_data(data):
-    validationIndexes = int(data.shape[0] / 10)
-    #shuffle the dataframe
-    shuffled_data = data.reindex(np.random.permutation(data.index))
-    #return training and validation data
-    return shuffled_data[validationIndexes:], shuffled_data[:validationIndexes]
-
-training_data, validation_data = split_data(data)
-
-model = create_model()
-model.summary()
-adam = Adam(lr=0.0001, beta_1=0.9, beta_2=0.999, epsilon=1e-08, decay=0.0)
-model.compile(loss='mse', optimizer=adam)
-nb_epoch = 2
-
-history = model.fit_generator(gen_batch(training_data, data_path, image_width, image_height), samples_per_epoch=300*32,
-                              validation_data=gen_batch(validation_data, data_path, image_width, image_height), nb_val_samples=30*32,
-                              nb_epoch=nb_epoch, verbose=1)
-
-model.save_weights("model.h5", True)
-with open('model.json', 'w') as outfile:
-    json.dump(model.to_json(), outfile)
-    print("Model saved")
+model.save('model.h5')
