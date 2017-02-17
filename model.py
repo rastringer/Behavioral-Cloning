@@ -10,7 +10,7 @@ import sklearn
 
 
 lines = []
-with open('./data3/driving_log.csv') as csvfile:
+with open('./data/driving_log.csv') as csvfile:
     next(csvfile, None)
     reader = csv.reader(csvfile)
     for line in reader:
@@ -23,9 +23,9 @@ for line in lines:
     for i in range(3):
         # Load images from center, left and right cameras
         source_path = line[i]
-        tokens = source_path.split('\\')
+        tokens = source_path.split('/')
         filename = tokens[-1]
-        local_path = "./data3/IMG/" + filename
+        local_path = "./data/IMG/" + filename
         image = cv2.imread(local_path)
         images.append(image)
 

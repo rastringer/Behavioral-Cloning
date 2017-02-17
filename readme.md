@@ -4,6 +4,7 @@
 [image1]: images/center_2016_12_01_13_30_48_287.jpg "Simulator"
 [image2]: images/model.PNG "Convolutional Neural Network in Keras"
 [image3]: images/car_driving.PNG "Autonomous Mode"
+[image4]: images/car_driving.PNG "Autonomous Mode"
 
 ##Teaching a car how to drive with deep learning
 
@@ -26,7 +27,11 @@ The network consists of 12 layers, including a normalization layer, 5 convolutio
 Firstly, we use Keras' lambda feature to normalize the images. Then we crop out the front of the car in the bottom of the image and the sky from the top, using the Cropping2D method.
 The model's first 3 convolutional layers have a 2 X 2 stride, 5 X 5 kernel and a relu activation. The last 2 convolutional layers are non-strided, with a 3 X 3 kernel size. Following the convolutional layers, we have a flatten layer, followed by the 3 fully-connected layers featuring 100, 50 and finally 1 neuron.
 
+Convolutional Neural Network in Keras
 ![alt text][image2]
+
+Results after 10 epochs
+![alt text][image3]
 
 ###Fine Tuning
 
@@ -34,4 +39,4 @@ It was illustrative to try the model on both Udacity's data and my own, which wa
 
 Once the model was working respectably, I decided to focus on improving it with the Udacity data. I felt there may be a temptation to focus on better simulator driving to cure model ills, and while those recordings are of course vital, I wanted to focus on the processing and convolutional neural network.
 
-![alt text][image3]
+![alt text][image4]
