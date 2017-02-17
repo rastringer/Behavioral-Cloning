@@ -1,5 +1,6 @@
 ''' 
-With huge thanks to Udacity Instructor David Silver for his excellent video Q & A on this project here http://bit.ly/2kwk5kz.
+With huge thanks to Udacity Instructor David Silver 
+for his excellent video Q & A on this project here http://bit.ly/2kwk5kz.
 Some of the code below is from the tutorial.
 '''
 
@@ -42,7 +43,10 @@ for line in lines:
 augmented_images = []
 augmented_measurements = []
 
-# Augmented data set by adding 'flipped' images so model can learn from reversed images, as well as random brightness (with thanks to Vivek Yadav at http://bit.ly/2kOk6MU for the latter)
+# Augmented data set by adding 'flipped' images 
+# so model can learn from reversed images, 
+#as well as random brightness 
+#(with thanks to Vivek Yadav at http://bit.ly/2kOk6MU for the latter)
 for image, measurement in zip(images, measurements):
     augmented_images.append(image)
     augmented_measurements.append(measurement)
@@ -55,7 +59,8 @@ for image, measurement in zip(images, measurements):
     augmented_images.append(flipped_image)
     augmented_measurements.append(flipped_measurement)
 
-# Pull the image and steering measurements into NumPy arrays we can use in the model
+# Pull the image and steering measurements 
+# into NumPy arrays we can use in the model
 X_train = np.array(augmented_images)
 y_train = np.array(augmented_measurements)
 
