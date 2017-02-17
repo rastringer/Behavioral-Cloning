@@ -2,8 +2,8 @@
 [//]: # (Image References)
 
 [image1]: images/center_2016_12_01_13_30_48_287.jpg "Simulator"
-[image2]: images/model.png "Convolutional Neural Network in Keras"
-[image3]: images/car_driving.png "Autonomous Mode"
+[image2]: images/model.jpg "Convolutional Neural Network in Keras"
+[image3]: images/car_driving.jpg "Autonomous Mode"
 
 ##Teaching a car how to drive with deep learning
 
