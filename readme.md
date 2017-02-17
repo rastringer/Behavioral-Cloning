@@ -1,13 +1,13 @@
 
 [//]: # (Image References)
 
-[image1]: ./data/IMG/center_2016_12_01_13_30_48_287.jpg
-[image2]: ./images/model.png
-[image3]: ./images/car_driving.png
+[image1]: ./data/IMG/center_2016_12_01_13_30_48_287.jpg "Simulator"
+[image2]: ./images/model.png "Convolutional Neural Network in Keras"
+[image3]: ./images/car_driving.png "Autonomous Mode"
 
-Deep learning to teach cars how to drive
+####Deep learning to teach cars how to drive
 
-Image processing and augmentation
+###Image processing and augmentation
 
 ![alt text][image1]
 
@@ -19,7 +19,7 @@ I adjusted steering values for left and right images to improve movement from th
 
 Since the bottom ~25 pixels of the image are of the car's front, and the top ~70 pixels are of the sky, I cropped the images to focus processing on the road. The crop is integral to the model, using Keras' Cropping2D feature.
 
-Architecture
+###Architecture
 
 I based the end-to-end convolutional neural network architecture summarized by Nvidia here: http://bit.ly/1T206A2.
 The network consists of 12 layers, including a normalization layer, 5 convolutional layers and 3 fully connected layers. 
@@ -28,7 +28,7 @@ The model's first 3 convolutional layers have a 2 X 2 stride, 5 X 5 kernel and a
 
 ![alt text][image2]
 
-Fine Tuning
+###Fine Tuning
 
 It was illustrative to try the model on both Udacity's data and my own, which was collected from driving in the simulator. I tried several iterations of controlling the car for 2 laps, one anti-clockwise and another clockwise to remove any directional bias, followed by a series of shorter recordings where I would sway to the ride of the road and record the recovery. 
 
