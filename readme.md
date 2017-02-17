@@ -28,9 +28,12 @@ Firstly, we use Keras' lambda feature to normalize the images. Then we crop out 
 The model's first 3 convolutional layers have a 2 X 2 stride, 5 X 5 kernel and a relu activation. The last 2 convolutional layers are non-strided, with a 3 X 3 kernel size. Following the convolutional layers, we have a flatten layer, followed by the 3 fully-connected layers featuring 100, 50 and finally 1 neuron.
 
 Convolutional Neural Network in Keras
+
 ![alt text][image2]
 
+
 Results after 10 epochs
+
 ![alt text][image3]
 
 ###Fine Tuning
