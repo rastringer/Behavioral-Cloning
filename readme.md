@@ -5,7 +5,7 @@
 [image2]: ./images/model.png "Convolutional Neural Network in Keras"
 [image3]: ./images/car_driving.png "Autonomous Mode"
 
-####Deep learning to teach cars how to drive
+##Deep learning to teach cars how to drive
 
 ###Image processing and augmentation
 
@@ -21,7 +21,7 @@ Since the bottom ~25 pixels of the image are of the car's front, and the top ~70
 
 ###Architecture
 
-I based the end-to-end convolutional neural network architecture summarized by Nvidia here: http://bit.ly/1T206A2.
+I based the end-to-end convolutional neural network architecture summarized by Nvidia [here](http://bit.ly/1T206A2).
 The network consists of 12 layers, including a normalization layer, 5 convolutional layers and 3 fully connected layers. 
 Firstly, we use Keras' lambda feature to normalize the images. Then we crop out the front of the car in the bottom of the image and the sky from the top, using the Cropping2D method.
 The model's first 3 convolutional layers have a 2 X 2 stride, 5 X 5 kernel and a relu activation. The last 2 convolutional layers are non-strided, with a 3 X 3 kernel size. Following the convolutional layers, we have a flatten layer, followed by the 3 fully-connected layers featuring 100, 50 and finally 1 neuron.
