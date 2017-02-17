@@ -3,7 +3,7 @@
 
 [image1]: images/center_2016_12_01_13_30_48_287.jpg "Simulator"
 [image2]: images/model.PNG "Convolutional Neural Network in Keras"
-[image3]: images/car_driving.PNG "Autonomous Mode"
+[image3]: images/model_results.PNG "Model Results"
 [image4]: images/car_driving.PNG "Autonomous Mode"
 
 ##Teaching a car how to drive with deep learning
