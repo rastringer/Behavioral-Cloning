@@ -137,7 +137,7 @@ Fourth take:
 
 ![alt text][image6]
 
-Notice the validation is now the lowest we have achieved so far. At this stage, the car is staying on the track longer, however we need to improve the accuracy of its steering further. 
+Notice the validation is now the lowest we have achieved so far. At this stage, the car is staying on the track longer, however we need to further improve the accuracy of its steering. 
 Another bias the car has learned is that it is often driving in the middle of the track and simply going straight. If we're to train the program, we need to make images and related steering angles of turning for corners more prominent in its learning. So we go back to the simulator, and record data of the car steering away from corners. A good way to do this is to drive close to the turn, and only hit record when steering away from the corners. This way the data isn't muddled by the car learning to turn towards the corners. 
 
 Furthermore, we separate the image data into center, left and right cameras. We add a 0.2 steering angle correction for left images, and subtract the same amount for right images.
