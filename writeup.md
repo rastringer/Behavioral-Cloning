@@ -7,13 +7,15 @@ The program is written in Python and deep learning framework Keras. You can see 
 
 [//]: # (Image References)
 
-[image1]: ./first_take.PNG "First take"
-[image2]: ./first_take_drive.PNG "First take"
-[image3]: ./second_take.PNG "Second take"
-[image4]: ./second_take_drive.PNG "Second take"
-[image5]: ./third_take.PNG "Third take"
-[image6]: ./fourth_take.PNG "Fourth take"
-[image7]: ./fifth_take_drive.PNG "Fifth take"
+[image1]: .article_images/first_take.PNG "First take"
+[image2]: .article_images/first_take_drive.PNG "First take"
+[image3]: .article_images/second_take.PNG "Second take"
+[image4]: .article_images/second_take_drive.PNG "Second take"
+[image5]: .article_images/third_take.PNG "Third take"
+[image6]: .article_images/fourth_take.PNG "Fourth take"
+[image7]: .article_images/fifth_take_drive.PNG "Fifth take"
+
+We're working with either the data of steering angles and images provided by Udacity, or collecting the data ourselves by driving a car around a track in a simulator. We'll need around 3 laps of driving to supply enough images and corresponding steering angles to work with. 
 
 First of all, we load the data of around 6,000 images from the csv file. The images are in three colums, snapped from center, right and left cameras. They have a corresponding steering angle -- the steer the car had to make in that frame to stay on the track. We load both into ```images[]``` and ```measurements``` arrays.
 
