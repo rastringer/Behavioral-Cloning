@@ -66,14 +66,14 @@ model.save('model.h5')
 
 This is a simple iteration, with a flattening layer and one fully-connected layer. Of course this doesn't provide much learning for the program, with predictably unsafe driving results:
 
+![alt text][image2]
+
 First model results
-Notice the model, running with 10 epochs, begins overfitting by epoch 8 (the validation error starts increasing).
+Notice the model, running with 10 epochs, begins overfitting by epoch 8 (the validation error starts increasing):
 
 ![alt text][image1]
 
-First Autonomous Drive
 
-![alt text][image2]
 
 To begin to make the model more sophisticated, we add a lambda function to normalize the images, this should reduce processing time.
 
@@ -84,11 +84,11 @@ model.add(Flatten(input_shape=(160,320,3)))
 model.add(Dense(1))
 ```
 Second take results
-Our errors are decreasing, however the overfitting begins again after epoch 7.
+Our errors are decreasing, however the overfitting begins again after epoch 7:
 
 ![alt text][image3]
 
-And we still drive into the lake
+And we still drive into the lake:
 
 ![alt text][image4]
 
@@ -97,12 +97,16 @@ The updated model:
 
 ```
 model = Sequential()
+# Normalizing lambda layer
 model.add(Lambda(lambda x: x / 255.0 - 0.5, input_shape=(160,320,3)))
+# First convolutional layer
 model.add(Convolution2D(6,5,5,activation='relu'))
 model.add(MaxPooling2D())
+# Second convolutional layer
 model.add(Convolution2D(6,5,5,activation='relu'))
 model.add(MaxPooling2D())
 model.add(Flatten())
+# Fully-connected layers
 model.add(Dense(120))
 model.add(Dense(84))
 model.add(Dense(1))
@@ -119,11 +123,13 @@ To counter this, we can flip the images. This doubles the image set to 12,856, w
 Here's the code:
 
 ```
+# Arrays to store additional images and measurements
 augmented_images = []
 augmented_measurements = []
 for image, measurement in zip(images, measurements):
 	augmented_images.append(image)
 	augmented_measurements.append(measurement)
+	# Flip images to reduce bias from anti-clockwise driving
 	flipped_image = cv2.flip(image, 1)
 	flipped_measurement = float(measurement) * -1.0
 	augmented_images.append(flipped_image)
@@ -214,7 +220,7 @@ model.save('model.h5')
 
 ```
 
-The car is now learning to keep to the middle and take corners competently.
+The car is now learning to keep to the middle and take corners competently:
 
 ![alt text][image7]
 
@@ -237,6 +243,7 @@ model.add(Dense(1))
 At this stage, the loss is down to 0.0157 after just 3 epochs. The car will probably be driving decently, however will likely go off the track at some of the trickier parts of the course. Now we can pay attention to these difficulties, add a few more recordings of the car navigating the features well (such as the bridge, or corners without the usual boundary markings).
 
 We can also have some fun experimenting with different model architectures. ResNet, AlexNet and others spring to mind as possible convolutional models. Below is an archietcture based on Nvidia's [end-to-end](http://images.nvidia.com/content/tegra/automotive/images/2016/solutions/pdf/end-to-end-dl-using-px.pdf) deep learning model. 
+The network consists of 12 layers, including a normalization layer, 5 convolutional layers and 3 fully connected layers. The model's first 3 convolutional layers have a 2 X 2 stride, 5 X 5 kernel and a relu activation. The last 2 convolutional layers are non-strided, with a 3 X 3 kernel size. Following the convolutional layers, we have a flatten layer, followed by the 3 fully-connected layers featuring 100, 50 and finally 1 neuron.
 
 ```
 model = Sequential()
@@ -254,4 +261,4 @@ model.add(Dense(10))
 model.add(Dense(1))
 ```
 
-The behavioral cloning project is a great lesson in the value, necessity and fun of experimentation with deep learning. Altering model architecture and parameters help us build an intuition of how convolutions, drop out layers and subsamples work together to make a useful model. 
+This is the stage at which the car began to make it around the track successfully for me. The behavioral cloning project is a great lesson in the fun and value in experimentation when working with deep learning. Altering model architecture and parameters help us build an intuition of how convolutions, drop out layers and subsamples work together to make a useful model. 
