@@ -1,5 +1,5 @@
 
-###Teaching a car to drive with deep learning
+### Teaching a car to drive with deep learning
 
 This article is a write up of David Silver's [video tutorial](https://www.youtube.com/watch?v=rpxZ87YFg0M&index=3&list=PLAwxTw4SYaPkz3HerxrHlu1Seq8ZA7-5P) for Udacity's excellent [Self-Driving Car Nanodegree](https://classroom.udacity.com/nanodegrees/nd013/syllabus). With thanks to David and all the instructors and mentors on the course.
 
